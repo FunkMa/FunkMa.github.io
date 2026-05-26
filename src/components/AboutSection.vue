@@ -14,7 +14,7 @@ import { about } from '@/data/about.js'
             Softwareingenieur mit Schwerpunkt auf Backend- und Cloud-Entwicklung. Fokus auf skalierbare Architekturen und verteilte Systeme, mit ergänzender Erfahrung in der Frontend-Entwicklung.
           </p>
           <p class="text-slate-300 leading-relaxed mb-5">
-            Während meines Studiums der angewandten Informatik an der Hochschule Ravensburg-Weingarten absolvierte ich mein Pflichtpraktikum bei der ZF Group und wurde anschließend als Werkstudent Teil des Teams. Nach dem Abschluss wechselte ich zur e-findo GmbH, wo ich hauptsächlich im Backend tätig bin.
+            Während meines Studiums der angewandten Informatik an der Hochschule Ravensburg-Weingarten war ich bei der ZF Group als Werkstudent im Software-in-the-Loop Team. Nach dem Abschluss wechselte ich zur e-findo GmbH, wo ich hauptsächlich im Backend tätig bin.
           </p>
           <p class="text-slate-300 leading-relaxed">
             In meiner Freizeit arbeite ich derzeit an
