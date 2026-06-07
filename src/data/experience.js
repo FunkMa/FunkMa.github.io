@@ -38,7 +38,7 @@ export const education = [
     period: '2018 - 2024',
     details: [
       'Profil: Robotik und Smart Devices',
-      'Bachelorarbeit: Das gRPC-Framework zur Nutzung in Web APIs',
+      { text: 'Bachelorarbeit: Das gRPC-Framework zur Nutzung in Web APIs', link: 'https://web-forward.de/2023/06/kommunikation-abseits-von-rest-und-graphql-grpc/' },
     ],
   },
   {
