@@ -1,7 +1,7 @@
 export const about = {
   name: 'Matthias Funk',
   title: 'Softwareingenieur · Backend & Cloud',
-  bio: 'Softwareingenieur mit Schwerpunkt auf Backend- und Cloud-Entwicklung. Fokus auf skalierbare Architekturen und verteilte Systeme mit ergänzender Erfahrung in der Frontend-Entwicklung.',
+  bio: 'Softwareingenieur mit Schwerpunkt auf Backend- und Cloud-Entwicklung. Ich lege Wert auf klare, verständliche Architekturen und wartbaren Code mit ergänzender Erfahrung in der Frontend-Entwicklung.',
   email: 'funk.matthias@outlook.com',
   github: 'https://github.com/FunkMa',
   linkedin: 'https://www.linkedin.com/in/matthias-funk-772514299/',
