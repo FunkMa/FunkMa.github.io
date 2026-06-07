@@ -61,11 +61,18 @@ import { experience, education } from '@/data/experience.js'
                 <ul v-if="edu.details.length" class="space-y-1.5">
                   <li
                     v-for="detail in edu.details"
-                    :key="detail"
+                    :key="typeof detail === 'string' ? detail : detail.text"
                     class="flex gap-2 text-slate-400 text-sm"
                   >
                     <span class="text-sky-400/60 shrink-0">▸</span>
-                    {{ detail }}
+                    <a
+                      v-if="typeof detail === 'object' && detail.link"
+                      :href="detail.link"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="text-sky-400 hover:text-sky-300 underline underline-offset-4"
+                    >{{ detail.text }}</a>
+                    <span v-else>{{ typeof detail === 'string' ? detail : detail.text }}</span>
                   </li>
                 </ul>
               </div>
