@@ -1,6 +1,7 @@
 export const projects = [
   {
     slug: 'magazineguessr',
+    year: 2026,
     title: 'MagazineGuessr.com',
     subheading: 'Web Game',
     image: 'magazineguessr.png',
@@ -33,6 +34,7 @@ Die eigentlichen Magazinseiten werden nicht im Backend gespeichert. Stattdessen 
   },
   {
     slug: 'shaderprogrammierung',
+    year: 2024,
     title: 'Shaderprogrammierung',
     subheading: 'GLSL Fragment Shader',
     image: 'shader.jpg',
@@ -81,6 +83,7 @@ Jeder Shader berechnet pro Fragment (Pixel) eigenständig Farbe und Beleuchtung 
   },
   {
     slug: 'gravity-jumper',
+    year: 2023,
     title: 'Gravity Jumper',
     subheading: 'Cross-Platform Videospiel',
     image: 'gravityjumper1.png',
@@ -103,6 +106,7 @@ Azure DevOps wurde für Versionsverwaltung, Sprint-Planung und die CI/CD-Pipelin
   },
   {
     slug: 'esport-event-tracker',
+    year: 2023,
     title: 'Esport Event Tracker',
     subheading: 'Android App',
     image: 'app2.png',
@@ -123,6 +127,7 @@ Die App unterstützt drei Sprachen (Deutsch, Englisch, Italienisch) und nutzt ei
   },
   {
     slug: 'lol-gadgets',
+    year: 2023,
     title: 'LoL Gadgets Webapp',
     subheading: 'Single-Page Application',
     image: 'lolgadgets.png',

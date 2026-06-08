@@ -1,19 +1,30 @@
 <script setup>
-import { reactive } from 'vue'
+import { reactive, computed } from 'vue'
 import { projects } from '@/data/projects.js'
 
 const imageLoaded = reactive({})
+
+const projectsByYear = computed(() => {
+  const years = [...new Set(projects.map(p => p.year))].sort((a, b) => b - a)
+  return years.map(year => ({
+    year,
+    projects: projects.filter(p => p.year === year),
+  }))
+})
 </script>
 
 <template>
   <section id="projects" class="py-24 border-t border-slate-800">
     <div class="max-w-5xl mx-auto px-6">
-      <p class="text-sky-400 text-xs font-mono tracking-widest mb-2">Projekte</p>
-      <h3 class="text-3xl font-bold text-slate-100 mb-12">Ausgewählte Projekte</h3>
+      <p class="text-sky-400 text-xs font-mono tracking-widest mb-2">Portfolio</p>
+      <h3 class="text-3xl font-bold text-slate-100 mb-12">Projekte</h3>
 
-      <div class="grid md:grid-cols-2 gap-6">
+      <div class="space-y-12">
+        <div v-for="group in projectsByYear" :key="group.year">
+          <p class="text-slate-500 text-xs font-mono tracking-widest mb-5">{{ group.year }}</p>
+          <div class="grid md:grid-cols-2 gap-6">
         <RouterLink
-          v-for="project in projects"
+          v-for="project in group.projects"
           :key="project.slug"
           :to="`/projekte/${project.slug}`"
           class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden hover:border-sky-400/30 transition-colors group flex flex-col"
@@ -86,6 +97,8 @@ const imageLoaded = reactive({})
             </div>
           </div>
         </RouterLink>
+          </div>
+        </div>
       </div>
     </div>
   </section>
