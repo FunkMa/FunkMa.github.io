@@ -11,6 +11,10 @@ const project = computed(() => projects.find((p) => p.slug === route.params.slug
 
 const activeShader = ref(null)
 const imageLoaded = ref(false)
+const lightboxOpen = ref(false)
+
+function openLightbox() { lightboxOpen.value = true }
+function closeLightbox() { lightboxOpen.value = false }
 
 watch(
   project,
@@ -46,15 +50,6 @@ watch(
           {{ project.subheading }}
         </p>
         <h1 class="text-4xl font-bold text-slate-100 mb-4">{{ project.title }}</h1>
-        <div class="flex flex-wrap gap-2 mb-6">
-          <span
-            v-for="tag in project.tags"
-            :key="tag"
-            class="text-xs px-2.5 py-1 bg-sky-400/10 text-sky-400 rounded font-mono border border-sky-400/20"
-          >
-            {{ tag }}
-          </span>
-        </div>
         <div class="flex gap-3">
           <a
             v-if="project.links?.live"
@@ -101,91 +96,167 @@ watch(
         >
       </div>
 
-      <!-- Description -->
-      <section v-if="project.fullDescription" class="mb-12">
-        <h2 class="text-xl font-semibold text-slate-100 mb-4">Beschreibung</h2>
-        <p
-          v-for="(para, i) in project.fullDescription.trim().split('\n\n')"
-          :key="i"
-          class="text-slate-300 leading-relaxed mb-4 last:mb-0"
-        >
-          {{ para }}
-        </p>
-      </section>
+      <!-- NEW STRUCTURE: projects with goals field -->
+      <template v-if="project.goals">
 
-      <!-- Shader live view -->
-      <section v-if="project.shaders?.length" class="mb-12">
-        <div class="w-full h-px bg-slate-800 mb-12" />
-        <h2 class="text-xl font-semibold text-slate-100 mb-5">Live Vorschau</h2>
-
-        <div class="flex flex-wrap gap-2 mb-5">
-          <button
-            v-for="shader in project.shaders"
-            :key="shader.file"
-            @click="activeShader = shader"
-            :class="[
-              'px-3 py-1.5 rounded-lg text-xs font-mono transition-colors border',
-              activeShader?.file === shader.file
-                ? 'bg-sky-400/20 border-sky-400/50 text-sky-400'
-                : 'border-slate-700 text-slate-400 hover:border-slate-600 hover:text-slate-300',
-            ]"
-          >
-            {{ shader.name }}
-          </button>
-        </div>
-
-        <ShaderViewer
-          v-if="activeShader"
-          :src="activeShader.file"
-          :key="activeShader.file"
-        />
-
-        <div class="mt-3 flex flex-col gap-1.5">
-          <p v-if="activeShader?.description" class="text-slate-500 text-sm">
-            {{ activeShader.description }}
-          </p>
+        <!-- Projekt & Ziele -->
+        <section v-if="project.goals" class="mb-12">
+          <h2 class="text-xl font-semibold text-slate-100 mb-4">Projekt &amp; Ziele</h2>
           <p
-            v-if="activeShader?.heavy"
-            class="text-amber-500/70 text-xs flex items-center gap-1.5"
+            v-for="(para, i) in project.goals.trim().split('\n\n')"
+            :key="i"
+            class="text-slate-300 leading-relaxed mb-4 last:mb-0"
+          >{{ para }}</p>
+        </section>
+
+        <div class="w-full h-px bg-slate-800 mb-12" />
+
+        <!-- Anforderungen -->
+        <section v-if="project.requirements?.length" class="mb-12">
+          <h2 class="text-xl font-semibold text-slate-100 mb-4">Anforderungen</h2>
+          <p class="text-slate-300 leading-relaxed mb-6">Zu Beginn des Projekts wurden folgende Anforderungen ausgearbeitet:</p>
+          <ul class="space-y-3">
+            <li
+              v-for="req in project.requirements"
+              :key="req.title"
+              class="flex gap-3 text-slate-300 leading-relaxed"
+            >
+              <span class="text-sky-400 shrink-0 mt-1">▸</span>
+              <span>{{ req.description }}</span>
+            </li>
+          </ul>
+        </section>
+
+        <div class="w-full h-px bg-slate-800 mb-12" />
+
+        <!-- Software -->
+        <section class="mb-12">
+          <h2 class="text-xl font-semibold text-slate-100 mb-6">Software</h2>
+          <img
+            v-if="project.architectureDiagram"
+            :src="`/images/${project.architectureDiagram}`"
+            :alt="`${project.title} Übersicht`"
+            class="w-full rounded-xl border border-slate-800 mb-8 cursor-zoom-in"
+            @click="openLightbox"
           >
-            <svg class="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm1 14.93V17a1 1 0 11-2 0v-.07A8.002 8.002 0 014 9h1a7 7 0 0014 0h1a8.002 8.002 0 01-7 7.93zM11 7V5a1 1 0 112 0v2a1 1 0 11-2 0z"/>
-            </svg>
-            Rechenintensiver Shader (eventuell niedrige Framerate)
-          </p>
-        </div>
-      </section>
 
-      <div class="w-full h-px bg-slate-800 mb-12" />
+          <!-- New: softwareSections -->
+          <template v-if="project.softwareSections">
+            <div v-for="(section, i) in project.softwareSections" :key="i" class="mb-8 last:mb-0">
+              <h3 v-if="section.heading" class="text-slate-200 font-semibold mb-3">{{ section.heading }}</h3>
+              <p
+                v-for="(para, j) in section.text.trim().split('\n\n')"
+                :key="'t' + j"
+                class="text-slate-300 leading-relaxed mb-3 last:mb-0"
+              >{{ para }}</p>
+              <pre v-if="section.code" class="bg-slate-900 border border-slate-800 rounded-lg p-4 text-sm text-sky-300 font-mono overflow-x-auto my-4 whitespace-pre">{{ section.code }}</pre>
+              <p
+                v-if="section.textAfter"
+                class="text-slate-300 leading-relaxed mt-3"
+              >{{ section.textAfter }}</p>
+            </div>
+          </template>
 
-      <!-- Architecture -->
-      <section v-if="project.architecture" class="mb-12">
-        <h2 class="text-xl font-semibold text-slate-100 mb-4">Architektur</h2>
-        <p
-          v-for="(para, i) in project.architecture.trim().split('\n\n')"
-          :key="i"
-          class="text-slate-300 leading-relaxed mb-4 last:mb-0"
-        >
-          {{ para }}
-        </p>
-      </section>
+          <!-- Fallback: plain architecture text -->
+          <template v-else>
+            <p
+              v-for="(para, i) in project.architecture.trim().split('\n\n')"
+              :key="i"
+              class="text-slate-300 leading-relaxed mb-4 last:mb-0"
+            >{{ para }}</p>
+          </template>
 
-      <div class="w-full h-px bg-slate-800 mb-12" />
+        </section>
 
-      <!-- Tech Stack -->
-      <section v-if="project.techStack?.length" class="mb-12">
-        <h2 class="text-xl font-semibold text-slate-100 mb-6">Tech Stack</h2>
-        <div class="grid sm:grid-cols-2 gap-3">
-          <div
-            v-for="tech in project.techStack"
-            :key="tech.name"
-            class="bg-slate-900 border border-slate-800 rounded-lg p-4 hover:border-sky-400/30 transition-colors"
-          >
-            <p class="text-sky-400 font-mono text-sm font-semibold mb-1">{{ tech.name }}</p>
-            <p class="text-slate-400 text-sm leading-relaxed">{{ tech.role }}</p>
+
+      </template>
+
+      <!-- LEGACY STRUCTURE: projects without motivation field -->
+      <template v-else>
+
+        <!-- Description -->
+        <section v-if="project.fullDescription" class="mb-12">
+          <h2 class="text-xl font-semibold text-slate-100 mb-4">Beschreibung</h2>
+          <p
+            v-for="(para, i) in project.fullDescription.trim().split('\n\n')"
+            :key="i"
+            class="text-slate-300 leading-relaxed mb-4 last:mb-0"
+          >{{ para }}</p>
+        </section>
+
+        <!-- Shader live view -->
+        <section v-if="project.shaders?.length" class="mb-12">
+          <div class="w-full h-px bg-slate-800 mb-12" />
+          <h2 class="text-xl font-semibold text-slate-100 mb-5">Live Vorschau</h2>
+
+          <div class="flex flex-wrap gap-2 mb-5">
+            <button
+              v-for="shader in project.shaders"
+              :key="shader.file"
+              @click="activeShader = shader"
+              :class="[
+                'px-3 py-1.5 rounded-lg text-xs font-mono transition-colors border',
+                activeShader?.file === shader.file
+                  ? 'bg-sky-400/20 border-sky-400/50 text-sky-400'
+                  : 'border-slate-700 text-slate-400 hover:border-slate-600 hover:text-slate-300',
+              ]"
+            >
+              {{ shader.name }}
+            </button>
           </div>
-        </div>
-      </section>
+
+          <ShaderViewer
+            v-if="activeShader"
+            :src="activeShader.file"
+            :key="activeShader.file"
+          />
+
+          <div class="mt-3 flex flex-col gap-1.5">
+            <p v-if="activeShader?.description" class="text-slate-500 text-sm">
+              {{ activeShader.description }}
+            </p>
+            <p
+              v-if="activeShader?.heavy"
+              class="text-amber-500/70 text-xs flex items-center gap-1.5"
+            >
+              <svg class="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm1 14.93V17a1 1 0 11-2 0v-.07A8.002 8.002 0 014 9h1a7 7 0 0014 0h1a8.002 8.002 0 01-7 7.93zM11 7V5a1 1 0 112 0v2a1 1 0 11-2 0z"/>
+              </svg>
+              Rechenintensiver Shader (eventuell niedrige Framerate)
+            </p>
+          </div>
+        </section>
+
+        <div class="w-full h-px bg-slate-800 mb-12" />
+
+        <!-- Architecture -->
+        <section v-if="project.architecture" class="mb-12">
+          <h2 class="text-xl font-semibold text-slate-100 mb-4">Architektur</h2>
+          <p
+            v-for="(para, i) in project.architecture.trim().split('\n\n')"
+            :key="i"
+            class="text-slate-300 leading-relaxed mb-4 last:mb-0"
+          >{{ para }}</p>
+        </section>
+
+        <div class="w-full h-px bg-slate-800 mb-12" />
+
+        <!-- Tech Stack -->
+        <section v-if="project.techStack?.length" class="mb-12">
+          <h2 class="text-xl font-semibold text-slate-100 mb-6">Tech Stack</h2>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div
+              v-for="tech in project.techStack"
+              :key="tech.name"
+              class="bg-slate-900 border border-slate-800 rounded-lg p-4 hover:border-sky-400/30 transition-colors"
+            >
+              <p class="text-sky-400 font-mono text-sm font-semibold mb-1">{{ tech.name }}</p>
+              <p class="text-slate-400 text-sm leading-relaxed">{{ tech.role }}</p>
+            </div>
+          </div>
+        </section>
+
+      </template>
 
     </div>
 
@@ -200,4 +271,31 @@ watch(
       </button>
     </div>
   </div>
+
+  <!-- Lightbox -->
+  <Teleport to="body">
+    <div
+      v-if="lightboxOpen"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+      @click.self="closeLightbox"
+      @keydown.esc="closeLightbox"
+      tabindex="0"
+    >
+      <button
+        @click="closeLightbox"
+        class="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors"
+        aria-label="Schließen"
+      >
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+      <img
+        v-if="project?.architectureDiagram"
+        :src="`/images/${project.architectureDiagram}`"
+        :alt="`${project.title} Übersicht`"
+        class="max-w-full max-h-full rounded-xl object-contain"
+      >
+    </div>
+  </Teleport>
 </template>

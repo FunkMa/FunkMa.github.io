@@ -81,17 +81,8 @@ const projectsByYear = computed(() => {
               {{ project.description }}
             </p>
 
-            <div class="flex items-center justify-between mt-auto">
-              <div class="flex flex-wrap gap-1.5">
-                <span
-                  v-for="tag in project.tags"
-                  :key="tag"
-                  class="text-xs px-2 py-0.5 bg-sky-400/10 text-sky-400 rounded font-mono border border-sky-400/20"
-                >
-                  {{ tag }}
-                </span>
-              </div>
-              <span class="text-slate-600 group-hover:text-sky-400 transition-colors text-xs font-mono shrink-0 ml-3">
+            <div class="flex justify-end mt-auto">
+              <span class="text-slate-600 group-hover:text-sky-400 transition-colors text-xs font-mono">
                 Details →
               </span>
             </div>

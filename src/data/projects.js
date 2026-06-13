@@ -6,31 +6,103 @@ export const projects = [
     subheading: 'Web Game',
     image: 'magazineguessr.png',
     description:
-      'Ratespiel mit täglich neuen Inhalten, bei dem Spieler anhand von Seiten aus Magazinen das Erscheinungsjahr schätzen müssen.',
-    tags: ['AWS CDK', 'Serverless', 'TypeScript', 'Node.js'],
-    links: { live: 'https://magazineguessr.com', github: null },
-    fullDescription: `MagazineGuessr ist ein Ratespiel, bei dem täglich neue Magazine bereitgestellt werden. Spieler müssen anhand visueller Hinweisen das Erscheinungsjahr der jeweiligen Seite schätzen.
+      'Tägliches Ratespiel, bei dem Spieler anhand von Seiten aus Zeitschriften des Internet Archive das Erscheinungsjahr schätzen müssen.',
+    links: { live: 'https://magazineguessr.com', github: 'https://github.com/magazine-guesser' },
+    goals: `MagazineGuessr ist ein tägliches Ratespiel, bei dem Spieler anhand von Zeitschriftenseiten aus dem Internet Archive das Erscheinungsjahr schätzen. Pro Tag stehen drei Zeitschriften bereit und je nach Schätzung erhählt man einen Score.
 
-Ein automatisierter Prozess stellt jeden Tag neue Inhalte bereit, sodass Spieler täglich zurückkehren können.`,
-    architecture: `Die Infrastruktur ist vollständig mit AWS CDK definiert.
-
-Das Frontend wird aus einem privaten S3-Bucket über CloudFront mit Origin Access Control (OAC) ausgeliefert. Das Backend läuft als Node.js 22 Lambda-Funktion, die als REST-API via HTTP Gateway erreichbar ist, mit zwei Aliasen: dev (latest) und prod (stabile Version).
-
-Zwei DynamoDB-Tabellen bilden die Datenbasis: magazines-daily für die tägliche Auswahl und magazines-pool als Katalog aller verfügbaren Magazine. Das CI/CD-Setup nutzt GitHub OIDC, sodass keine statischen AWS-Credentials gespeichert werden müssen.
-
-Die eigentlichen Magazinseiten werden nicht im Backend gespeichert. Stattdessen werden pro Eintrag nur der Identifier des Magazins, das Erscheinungsjahr, sowie Markierungen für die Zensur von Jahreszahlen hinterlegt. Die Bilder selbst werden zur Laufzeit direkt vom Internet Archive (archive.org) bezogen.`,
-    techStack: [
-      { name: 'AWS CDK', role: 'Infrastructure as Code, Stacks in TypeScript definiert' },
-      { name: 'AWS Lambda', role: 'Serverless Backend, als REST-API via HTTP Gateway erreichbar, mit dev- und prod-Alias' },
-      { name: 'AWS API Gateway v2', role: 'HTTP-APIs für prod und dev mit separaten Throttling-Limits für öffentliche und Admin-Routen' },
-      { name: 'AWS CloudFront', role: 'CDN mit Origin Access Control auf privaten S3 bucket' },
-      { name: 'AWS S3', role: 'Privater bucket mit Frontend-Assets und Deployment' },
-      { name: 'AWS DynamoDB', role: 'Zwei On-Demand-Tabellen: magazines-daily (tägliche Auswahl) und magazines-pool (vorbereitete spielbare Zeitschriften)' },
-      { name: 'AWS ECR', role: 'Container Registry für scheduled Image, welches aus magazines-pool die tägliche Auswahl bildet' },
-      { name: 'AWS Route 53', role: 'DNS-Verwaltung für magazineguessr.com und Subdomains' },
-      { name: 'GitHub OIDC', role: 'CI/CD mit minimal berechtigten IAM-Rollen' },
-      { name: 'TypeScript', role: 'Sprache die im Front- und Backend hauptsächlich genutzt wird' },
+Ziel war es, gemeinsam im Team ein Web Game zu entwickeln, das anderen Spaß macht und Spieler dazu einlädt, am nächsten Tag wiederzukehren. Zusätzlich sollten dabei best practices in React, AWS CDK und TypeScript vertieft werden.`,
+    requirements: [
+      {
+        title: 'Copyright Absicherung',
+        description: 'Es wird ausschließlich der Identifier einer Zeitschrift gespeichert. Die Zeitschriftenseiten selbst werden im Frontend direkt über die öffentliche API des Internet Archive abgerufen und nie zwischengespeichert oder über eine eigene Schnittstelle weitergereicht. Sollte ein Copyright-Problem auftreten, können sich Rechteinhaber direkt an das Legal Team des Internet Archive wenden, das auf solche Fragen spezialisiert ist.',
+      },
+      {
+        title: 'Inhaltsrichtlinien',
+        description: 'Es werden keine Zeitschriften verwendet, deren Inhalte gegen den digitalen Jugendschutz verstoßen.',
+      },
+      {
+        title: 'Wiederholbarkeit',
+        description: 'Zeitschriften, die bereits als Daily Challenge erschienen sind, werden für 180 Tage gesperrt und erst danach wieder in den spielbaren Pool aufgenommen.',
+      },
+      {
+        title: 'Inhaltliche und visuelle Qualität',
+        description: 'Ausgewählte Zeitschriften müssen anhand ihrer Seiten erkennbare Anhaltspunkte auf ihr Erscheinungsjahr bieten und gleichzeitig visuell ansprechende Inhalte enthalten, die das Spielen interessant machen.',
+      },
+      {
+        title: 'Genre Vielfalt',
+        description: 'Der kuratierte Pool soll möglichst verschiedene Zeitschriftentypen abdecken, um eine abwechslungsreiche Spielerfahrung zu gewährleisten.',
+      },
     ],
+    architectureDiagram: 'magazineguessr2.png',
+    softwareSections: [
+      {
+        text: `Die Infrastruktur ist vollständig mit AWS CDK in TypeScript definiert und in drei Stacks aufgeteilt: CertStack (TLS-Zertifikat-Verwaltung via ACM, muss zwingend in us-east-1 liegen da CloudFront nur dort ausgestellte Zertifikate akzeptiert), InfraStack (CloudFront, S3, DynamoDB, Route 53, GitHub OIDC, ECR) und AppStack (Lambda-Funktionen, API Gateway, EventBridge).
+
+Das Frontend wird aus einem privaten S3-Bucket über CloudFront ausgerollt. Das Backend läuft als Node.js 22 Lambda-Funktion mit Fastify, erreichbar über zwei separate API-Gateway-Endpunkte für prod (api.magazineguessr.com) und dev (api.dev.magazineguessr.com). Beide Umgebungen werden über Lambda-Aliase abgebildet.
+
+Als Datenbank kommen zwei DynamoDB Tabellen zum Einsatz. Gegenüber einer RDS Aurora MySQL-Instanz ist DynamoDB im aktuellen Projektstand deutlich günstiger, da bei geringem Verkehr keine dauerhaft laufende Instanz bezahlt werden muss.`,
+      },
+      {
+        heading: 'Internet Archive',
+        text: `Um Inhalte einer Zeitschrift abzurufen, benötigt die öffentliche API des Internet Archive den Identifier der Zeitschrift, die beispielsweise so aussieht:`,
+        code: `das-magazin-heft-1-januar-1961`,
+        textAfter: `Mit diesem Identifier ruft das Frontend einzelne Seiten direkt vom Internet Archive ab: https://archive.org/download/{identifier}/page/n{seitenindex}_w800.jpg`,
+      },
+      {
+        heading: 'Struktur: magazines-pool',
+        text: `In der DynamoDB-Tabelle magazines-pool werden alle kuratierten Zeitschriften als Backlog verwaltet. Ein Eintrag sieht so aus:`,
+        code: `{
+  "identifier":  "das-magazin-heft-1-januar-1961",
+  "uuid":        "e1183620-dd8a-4885-854c-225ebe22b830",
+  "title":       "Das Magazin",
+  "year":        1961,
+  "status":      "BACKLOG",
+  "pageRanges":  [[1, 4], [14, 15]],
+  "redactions":  [
+    { "page": 0, "x": 156, "y": 85, "width": 42, "height": 200 }
+  ]
+}`,
+        textAfter: `identifier ist der Internet-Archive-Schlüssel zum Abrufen der Seiten. uuid dient als Sort Key und sorgt für eine pseudo-zufällige Auswahl durch den Scheduler. Da identifier und uuid zusammen den zusammengesetzten Primärschlüssel bilden, lässt sich dieselbe Zeitschrift mit unterschiedlichen pageRanges, durch das ändern der uuid, in den Pool aufnehmen. pageRanges legt fest, welche Seiten der Zeitschrift im Spiel gezeigt werden. redactions beschreibt rechteckige Bereiche auf bestimmten Seiten, die clientseitig geschwärzt werden, um sichtbare Jahreszahlen zu verdecken (Koordinaten in Pixeln relativ zur angezeigten Bildgröße). status gibt an, ob die Zeitschrift als BACKLOG verfügbar oder als USED gesperrt ist.`,
+      },
+      {
+        heading: 'Backend Lambda',
+        text: `Das Herzstück vom Backend ist eine Lambda-Funktion, die Anfragen vom Frontend entgegennimmt und REST-Endpunkte bereitstellt: GET /daily/{datum} gibt die drei Zeitschriften ohne das year-Feld zurück, damit Spieler das Erscheinungsjahr nicht im Netzwerk-Tab einsehen können. POST /daily/{datum}/{nr}/guess nimmt eine Schätzung entgegen und gibt das korrekte Jahr, die Differenz sowie den Score zurück (max(0, 1000 − |Schätzung − Jahr| × 10)). Über den Admin-Endpunkt lassen sich neue Zeitschriften in den Pool eintragen sowie die tägliche Auswahl verwalten.
+
+Das Lambda läuft in einer Node.js 22 und dem Fastify-Framework. Der Einsatz von Fastify ermöglicht es, die Anwendung bei Bedarf ohne größere Anpassungen von AWS Lambda auf einen eigenen VPS umzuziehen.
+
+Falls für ein Datum weniger als drei Zeitschriften in der Datenbank hinterlegt sind, werden fehlende Slots automatisch mit Einträgen aus einer statischen fallback.json aufgefüllt.`,
+      },
+      {
+        heading: 'Zeitschriften hinzufügen',
+        text: `Neue Zeitschriften werden über eine interne Admin-Oberfläche im Frontend vorbereitet. Über den gesicherten Endpunkt PUT /admin/pool können Zeitschriften mit Identifier, Titel, Erscheinungsjahr, Seitenbereichen und Schwärzungen in den Pool eingetragen werden. Der Admin-Key wird in AWS Secrets Manager hinterlegt und bei jedem Request serverseitig geprüft.
+
+Beim Hinzufügen wird manuell festgelegt, welche Seiten spielbar sind (pageRanges) und an welchen Stellen Jahreszahlen geschwärzt werden müssen (redactions). Langfristig soll dieser manuelle Prozess durch eine OCR-basierte Erkennung automatisiert werden.`,
+      },
+      {
+        heading: 'Scheduler & Recycler',
+        text: `Jede Nacht um 00:00 UTC wird der Scheduler-Worker über EventBridge ausgelöst. Er fragt über einen GSI auf dem status-Feld drei Zeitschriften mit Status BACKLOG aus magazines-pool ab. Die drei Einträge werden auf USED gesetzt und erhalten ein TTL-Attribut mit einem Ablaufdatum 180 Tage in der Zukunft. Anschließend werden sie mit dem morgigen Datum und den Nummern 1–3 in magazines-daily eingetragen.
+
+Wenn das TTL eines Eintrags abläuft und DynamoDB ihn automatisch löscht, wird dieses Ereignis über DynamoDB Streams an den Recycler-Worker weitergeleitet. Dieser erkennt anhand von userIdentity.type === "Service", dass es sich um einen TTL-Löschvorgang handelt, und trägt die Zeitschrift mit einer neuen UUID und dem Status BACKLOG wieder in magazines-pool ein womit sie nach 180 Tagen erneut als Daily Challenge erscheinen kann.`,
+      },
+    ],
+    techStack: [
+      { name: 'AWS CDK', role: 'Infrastructure as Code – alle Ressourcen in TypeScript definiert, drei Stacks: Cert, Infra, App' },
+      { name: 'AWS Lambda', role: 'Serverless Backend (Node.js 22 / Fastify) mit dev- und prod-Alias; separater Scheduler- und Recycler-Worker' },
+      { name: 'AWS API Gateway v2', role: 'HTTP-APIs für prod und dev mit eigenen Custom Domains und Throttling-Konfiguration' },
+      { name: 'AWS CloudFront + S3', role: 'SPA-Hosting über privaten S3-Bucket mit Origin Access Control' },
+      { name: 'AWS DynamoDB', role: 'Zwei Tabellen: magazines-pool (Backlog) und magazines-daily (Tagesauswahl); TTL-basiertes Recycling' },
+      { name: 'AWS EventBridge', role: 'Nightly Trigger (00:00 UTC) für den Scheduler-Worker' },
+      { name: 'AWS ECR', role: 'Container Registry für den containerisierten Scheduler-Worker' },
+      { name: 'AWS Route 53 + ACM', role: 'DNS-Verwaltung und TLS-Zertifikate für magazineguessr.com und Subdomains' },
+      { name: 'GitHub OIDC', role: 'CI/CD-Authentifizierung ohne statische Credentials – vier separate Rollen für Infra, Backend, Frontend und Workers' },
+    ],
+    webUI: `Die Spieloberfläche ist als React 18 / TypeScript Single-Page Application mit Tailwind CSS umgesetzt. Täglich stehen drei Zeitschriften zur Verfügung. Jede Runde beginnt mit einer eingeschränkten Seitenansicht – der Umschlag ist zunächst verborgen. Mit jeder falschen Schätzung werden weitere Seiten der Zeitschrift freigegeben; nach der letzten Fehleingabe erscheint der Cover als finale Hilfe.
+
+Die Punktzahl pro Runde ergibt sich aus dem Abstand zum tatsächlichen Erscheinungsjahr: max(0, 1000 − |Schätzung − Jahrgang| × 40). Das Tagesmaximum liegt bei 3000 Punkten über drei Runden.
+
+Der Spielfortschritt wird vollständig im localStorage gespeichert. Ein Checkpoint-System stellt sicher, dass unterbrochene Spielsitzungen beim nächsten Besuch wiederhergestellt werden können. Abgeschlossene Tages-Challenges werden ebenfalls persistiert, sodass vergangene Ergebnisse einsehbar bleiben.
+
+Eine Abfrage einer Zeitschriftenseite vom Internet Archive dauert im Schnitt etwa 2,4 Sekunden. Da ein serverseitiges Caching und Weiterreichen der Inhalte die Copyright-Anforderung verletzen würde, musste eine andere Lösung gefunden werden: Alle spielbaren Seiten der ersten Zeitschrift werden direkt beim Klick auf "Play Daily Challenge" im Hintergrund vorgeladen. Die Seiten der beiden weiteren Zeitschriften werden während der Anzeige des jeweiligen Zwischenergebnisses geladen. Die erste Zeitschrift hat dadurch noch eine kurze initiale Ladezeit, die beiden folgenden sind jedoch ohne Wartezeit verfügbar und ermöglichen einen nahtlosen Übergang zwischen den Runden.`,
   },
   {
     slug: 'shaderprogrammierung',
@@ -40,7 +112,6 @@ Die eigentlichen Magazinseiten werden nicht im Backend gespeichert. Stattdessen 
     image: 'shader.jpg',
     description:
       'Eine Sammlung von Shadern: Raytracer mit Box-Intersection und Fresnel-Effekt, stochastischer Raytracer mit Soft Shadows, sowie ein Sphere Tracer mit Signed Distance Functions.',
-    tags: ['GLSL', 'WebGL', 'Raytracing'],
     links: { live: null, github: null },
     shaders: [
       {
@@ -89,7 +160,6 @@ Jeder Shader berechnet pro Fragment (Pixel) eigenständig Farbe und Beleuchtung 
     image: 'gravityjumper1.png',
     description:
       'Cross-Platform Videospiel, in dem man die Gravitationsrichtung wechselt. Entwickelt im Scrum-Verfahren über ein Semester mit Azure DevOps, CI/CD und automatisierten Tests.',
-    tags: ['C#', 'MonoGame', 'Scrum', 'Azure DevOps'],
     links: { live: null, github: null },
     fullDescription: `Gravity Jumper ist ein 2D-Plattformspiel, bei dem der Spieler die Gravitationsrichtung wechseln kann. Das Spiel entstand als Gruppenprojekt im Rahmen einer Lehrveranstaltung und wurde vollständig nach dem Scrum-Framework über sechs Sprints entwickelt.
 
@@ -112,7 +182,6 @@ Azure DevOps wurde für Versionsverwaltung, Sprint-Planung und die CI/CD-Pipelin
     image: 'app2.png',
     description:
       'Android App, die kommende E-Sport Matches für verschiedene Spiele anzeigt. Unterstützt drei Sprachen: Deutsch, Englisch und Italienisch.',
-    tags: ['Android', 'Java'],
     links: { live: null, github: null },
     fullDescription: `Der Esport Event Tracker ist eine native Android App, die bevorstehende E-Sport Matches für verschiedene Titel aggregiert und übersichtlich darstellt (vergleichbar mit einem digitalen Spielplan).
 
@@ -133,7 +202,6 @@ Die App unterstützt drei Sprachen (Deutsch, Englisch, Italienisch) und nutzt ei
     image: 'lolgadgets.png',
     description:
       'Single-Page Webapplication zu League of Legends, die einen zufälligen spielbaren Charakter anzeigt und ein Minispiel zur Verifikation der Spielrunde bietet.',
-    tags: ['JavaScript', 'Vue.js'],
     links: { live: null, github: null },
     fullDescription: `Die LoL Gadgets Webapp ist eine Single-Page Application rund um das Spiel League of Legends. Sie ruft über die offizielle Riot Games API Daten zu Champions ab und stellt diese dynamisch dar.
 
