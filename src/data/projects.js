@@ -139,17 +139,24 @@ Eine Abfrage einer Zeitschriftenseite vom Internet Archive dauert im Schnitt etw
         heavy: false,
       },
     ],
-    fullDescription: `Im Rahmen der Veranstaltung Shaderprogrammierung entstand eine Sammlung von Fragment Shadern, die verschiedene Rendering-Techniken demonstrieren. Alle Shader sind in GLSL geschrieben und laufen direkt auf der GPU.
-
-Die Projekte reichen von klassischem Raytracing über stochastische Methoden bis hin zu modernen Signed Distance Function Techniken.`,
-    architecture: `Alle Shader sind als GLSL Fragment Shader implementiert und werden vollständig auf der GPU ausgeführt. Es gibt keine CPU-seitige Logik außer der Initialisierung des WebGL-Kontexts und dem Übergeben von Uniforms (Zeit, Auflösung).
-
-Jeder Shader berechnet pro Fragment (Pixel) eigenständig Farbe und Beleuchtung durch mathematische Strahlverfolgung.`,
-    techStack: [
-      { name: 'GLSL', role: 'Shader-Sprache für alle Fragment-Programme' },
-      { name: 'WebGL', role: 'Browser-API zur GPU-Ausführung der Shader' },
-      { name: 'Raytracing', role: 'Rendering-Technik für realistische Beleuchtung, inklusive reflektierter und gebrochener Strahlen zur Simulation von bspw. der Transparenz von Glas oder der Spiegelung von polierten Oberflächen.' },
-      { name: 'Signed Distance Functions', role: 'Mathematische Beschreibung von 3D-Geometrie für den Sphere Tracer' },
+    fullDescription: `Im Rahmen der Veranstaltung Shaderprogrammierung entstand eine Sammlung von Fragment Shadern, die verschiedene Rendering-Techniken demonstrieren. Alle Shader sind in GLSL geschrieben und laufen vollständig auf der GPU – ohne CPU-seitige Logik außer der Initialisierung des WebGL-Kontexts und dem Übergeben von Uniforms (Zeit, Auflösung).`,
+    shaderTechniques: [
+      {
+        name: 'Heartbeat',
+        description: 'Die Szene besteht aus einem animierten Oktaeder über einer prozeduralen Wellenebene. Jede Geometrie wird durch eine Signed Distance Function beschrieben, die den kürzesten Abstand eines Punktes zur Oberfläche zurückgibt. Der Sphere-Tracer schreitet entlang des Sehstrahls in Schritten vor, deren Größe jeweils dem minimalen SDF-Wert entspricht, bis er auf eine Oberfläche trifft oder den Maximalabstand überschreitet.',
+      },
+      {
+        name: 'Falling Blocks',
+        description: 'Klassischer Raytracer mit analytischer Box-Intersection. Trifft ein Strahl auf eine Glasfläche, wird der Anteil von Reflexion und Refraktion winkelabhängig nach der Fresnel-Gleichung berechnet: Bei flachem Einfall überwiegt die Reflexion, bei senkrechtem Einfall dominiert die Transmission. Animierte Blöcke fallen durch die Szene und werfen Reflexionen auf die Grundebene.',
+      },
+      {
+        name: 'Soft Shadow Spheres',
+        description: 'Für jeden Pixel werden 64 Schattenstrahlen zu zufälligen Punkten auf der Lichtquelle geworfen. Der Anteil der Strahlen, die die Lichtquelle ungehindert erreichen, bestimmt die Schattenintensität. So entstehen realistische Halbschatten (Penumbra) anstelle harter Schattenkanten. Da Live gerendet benötigt der Shader eine leistungsfähige GPU.',
+      },
+      {
+        name: 'Pushing Spheres',
+        description: 'Sphere Tracer, der einfache Grundkörper wie Kugeln und Hex-Prismen über boolesche Operatoren (Union, Subtraktion, Schnittmenge) zu komplexerer Geometrie kombiniert.',
+      },
     ],
   },
   // {

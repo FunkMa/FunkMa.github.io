@@ -229,29 +229,13 @@ watch(
 
         <div class="w-full h-px bg-slate-800 mb-12" />
 
-        <!-- Architecture -->
-        <section v-if="project.architecture" class="mb-12">
-          <h2 class="text-xl font-semibold text-slate-100 mb-4">Architektur</h2>
-          <p
-            v-for="(para, i) in project.architecture.trim().split('\n\n')"
-            :key="i"
-            class="text-slate-300 leading-relaxed mb-4 last:mb-0"
-          >{{ para }}</p>
-        </section>
-
-        <div class="w-full h-px bg-slate-800 mb-12" />
-
-        <!-- Tech Stack -->
-        <section v-if="project.techStack?.length" class="mb-12">
-          <h2 class="text-xl font-semibold text-slate-100 mb-6">Tech Stack</h2>
-          <div class="grid sm:grid-cols-2 gap-3">
-            <div
-              v-for="tech in project.techStack"
-              :key="tech.name"
-              class="bg-slate-900 border border-slate-800 rounded-lg p-4 hover:border-sky-400/30 transition-colors"
-            >
-              <p class="text-sky-400 font-mono text-sm font-semibold mb-1">{{ tech.name }}</p>
-              <p class="text-slate-400 text-sm leading-relaxed">{{ tech.role }}</p>
+        <!-- Shader techniques -->
+        <section v-if="project.shaderTechniques?.length" class="mb-12">
+          <h2 class="text-xl font-semibold text-slate-100 mb-8">Shader Demos</h2>
+          <div class="space-y-8">
+            <div v-for="(s, i) in project.shaderTechniques" :key="i">
+              <h3 class="text-slate-200 font-semibold mb-2">{{ s.name }}</h3>
+              <p class="text-slate-400 text-sm leading-relaxed">{{ s.description }}</p>
             </div>
           </div>
         </section>
