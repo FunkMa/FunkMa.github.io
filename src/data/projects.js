@@ -152,65 +152,65 @@ Jeder Shader berechnet pro Fragment (Pixel) eigenständig Farbe und Beleuchtung 
       { name: 'Signed Distance Functions', role: 'Mathematische Beschreibung von 3D-Geometrie für den Sphere Tracer' },
     ],
   },
-  {
-    slug: 'gravity-jumper',
-    year: 2023,
-    title: 'Gravity Jumper',
-    subheading: 'Cross-Platform Videospiel',
-    image: 'gravityjumper1.png',
-    description:
-      'Cross-Platform Videospiel, in dem man die Gravitationsrichtung wechselt. Entwickelt im Scrum-Verfahren über ein Semester mit Azure DevOps, CI/CD und automatisierten Tests.',
-    links: { live: null, github: null },
-    fullDescription: `Gravity Jumper ist ein 2D-Plattformspiel, bei dem der Spieler die Gravitationsrichtung wechseln kann. Das Spiel entstand als Gruppenprojekt im Rahmen einer Lehrveranstaltung und wurde vollständig nach dem Scrum-Framework über sechs Sprints entwickelt.
-
-Besonderer Fokus lag auf professioneller Softwareentwicklung: agile Prozesse, kontinuierliche Integration und automatisierte Tests waren fester Bestandteil des Entwicklungsprozesses.`,
-    architecture: `Das Spiel basiert auf dem MonoGame-Framework und nutzt dessen Game-Loop-Architektur (Update/Draw). Die Spiellogik ist in unabhängige Komponenten aufgeteilt: Physics Engine, Input Handler, Renderer und Game State Manager.
-
-Azure DevOps wurde für Versionsverwaltung, Sprint-Planung und die CI/CD-Pipeline verwendet. Bei jedem Commit wurden automatisch Unit-Tests ausgeführt und ein Build erstellt.`,
-    techStack: [
-      { name: 'C#', role: 'Programmiersprache' },
-      { name: 'MonoGame', role: 'Cross-Platform Game Framework' },
-      { name: 'Azure DevOps', role: 'Versionsverwaltung, Sprint-Planung und CI/CD-Pipeline' },
-      { name: 'MSTest', role: 'Unit-Testing Framework für automatisierte Tests' },
-    ],
-  },
-  {
-    slug: 'esport-event-tracker',
-    year: 2023,
-    title: 'Esport Event Tracker',
-    subheading: 'Android App',
-    image: 'app2.png',
-    description:
-      'Android App, die kommende E-Sport Matches für verschiedene Spiele anzeigt. Unterstützt drei Sprachen: Deutsch, Englisch und Italienisch.',
-    links: { live: null, github: null },
-    fullDescription: `Der Esport Event Tracker ist eine native Android App, die bevorstehende E-Sport Matches für verschiedene Titel aggregiert und übersichtlich darstellt (vergleichbar mit einem digitalen Spielplan).
-
-Die App unterstützt drei Sprachen (Deutsch, Englisch, Italienisch) und nutzt eine externe API zur Datenbeschaffung.`,
-    architecture: `Die App folgt einer einfachen Activity-basierten Architektur. Daten werden von einer externen E-Sport API über HTTP-Anfragen geladen und im UI dargestellt. Die Mehrsprachigkeit wird über Android-Ressourcendateien (strings.xml) realisiert.`,
-    techStack: [
-      { name: 'Java', role: 'Programmiersprache' },
-      { name: 'Android SDK', role: 'Native App-Entwicklung' },
-      { name: 'REST API', role: 'Datenbeschaffung für E-Sport Matches' },
-      { name: 'Android Localization', role: 'Mehrsprachigkeit (DE, EN, IT)' },
-    ],
-  },
-  {
-    slug: 'lol-gadgets',
-    year: 2023,
-    title: 'LoL Gadgets Webapp',
-    subheading: 'Single-Page Application',
-    image: 'lolgadgets.png',
-    description:
-      'Single-Page Webapplication zu League of Legends, die einen zufälligen spielbaren Charakter anzeigt und ein Minispiel zur Verifikation der Spielrunde bietet.',
-    links: { live: null, github: null },
-    fullDescription: `Die LoL Gadgets Webapp ist eine Single-Page Application rund um das Spiel League of Legends. Sie ruft über die offizielle Riot Games API Daten zu Champions ab und stellt diese dynamisch dar.
-
-Ein integriertes Minispiel erlaubt es Spielern, ihren gespielten Champion nach einer Spielrunde zu verifizieren und Statistiken einzusehen.`,
-    architecture: `Die Anwendung ist als SPA mit Vue.js umgesetzt. Daten werden direkt im Browser von der Riot Games Data Dragon API und der League of Legends API abgerufen. Die gesamte Logik läuft client-seitig, es gibt kein eigenes Backend.`,
-    techStack: [
-      { name: 'Vue.js', role: 'Frontend-Framework für die Single-Page Application' },
-      { name: 'JavaScript', role: 'Programmiersprache' },
-      { name: 'Riot Games API', role: 'Datenbeschaffung für Champions und Spielstatistiken' },
-    ],
-  },
+  // {
+  //   slug: 'gravity-jumper',
+  //   year: 2023,
+  //   title: 'Gravity Jumper',
+  //   subheading: 'Cross-Platform Videospiel',
+  //   image: 'gravityjumper1.png',
+  //   description:
+  //     'Cross-Platform Videospiel, in dem man die Gravitationsrichtung wechselt. Entwickelt im Scrum-Verfahren über ein Semester mit Azure DevOps, CI/CD und automatisierten Tests.',
+  //   links: { live: null, github: null },
+  //   fullDescription: `Gravity Jumper ist ein 2D-Plattformspiel, bei dem der Spieler die Gravitationsrichtung wechseln kann. Das Spiel entstand als Gruppenprojekt im Rahmen einer Lehrveranstaltung und wurde vollständig nach dem Scrum-Framework über sechs Sprints entwickelt.
+  //
+  // Besonderer Fokus lag auf professioneller Softwareentwicklung: agile Prozesse, kontinuierliche Integration und automatisierte Tests waren fester Bestandteil des Entwicklungsprozesses.`,
+  //   architecture: `Das Spiel basiert auf dem MonoGame-Framework und nutzt dessen Game-Loop-Architektur (Update/Draw). Die Spiellogik ist in unabhängige Komponenten aufgeteilt: Physics Engine, Input Handler, Renderer und Game State Manager.
+  //
+  // Azure DevOps wurde für Versionsverwaltung, Sprint-Planung und die CI/CD-Pipeline verwendet. Bei jedem Commit wurden automatisch Unit-Tests ausgeführt und ein Build erstellt.`,
+  //   techStack: [
+  //     { name: 'C#', role: 'Programmiersprache' },
+  //     { name: 'MonoGame', role: 'Cross-Platform Game Framework' },
+  //     { name: 'Azure DevOps', role: 'Versionsverwaltung, Sprint-Planung und CI/CD-Pipeline' },
+  //     { name: 'MSTest', role: 'Unit-Testing Framework für automatisierte Tests' },
+  //   ],
+  // },
+  // {
+  //   slug: 'esport-event-tracker',
+  //   year: 2023,
+  //   title: 'Esport Event Tracker',
+  //   subheading: 'Android App',
+  //   image: 'app2.png',
+  //   description:
+  //     'Android App, die kommende E-Sport Matches für verschiedene Spiele anzeigt. Unterstützt drei Sprachen: Deutsch, Englisch und Italienisch.',
+  //   links: { live: null, github: null },
+  //   fullDescription: `Der Esport Event Tracker ist eine native Android App, die bevorstehende E-Sport Matches für verschiedene Titel aggregiert und übersichtlich darstellt (vergleichbar mit einem digitalen Spielplan).
+  //
+  // Die App unterstützt drei Sprachen (Deutsch, Englisch, Italienisch) und nutzt eine externe API zur Datenbeschaffung.`,
+  //   architecture: `Die App folgt einer einfachen Activity-basierten Architektur. Daten werden von einer externen E-Sport API über HTTP-Anfragen geladen und im UI dargestellt. Die Mehrsprachigkeit wird über Android-Ressourcendateien (strings.xml) realisiert.`,
+  //   techStack: [
+  //     { name: 'Java', role: 'Programmiersprache' },
+  //     { name: 'Android SDK', role: 'Native App-Entwicklung' },
+  //     { name: 'REST API', role: 'Datenbeschaffung für E-Sport Matches' },
+  //     { name: 'Android Localization', role: 'Mehrsprachigkeit (DE, EN, IT)' },
+  //   ],
+  // },
+  // {
+  //   slug: 'lol-gadgets',
+  //   year: 2023,
+  //   title: 'LoL Gadgets Webapp',
+  //   subheading: 'Single-Page Application',
+  //   image: 'lolgadgets.png',
+  //   description:
+  //     'Single-Page Webapplication zu League of Legends, die einen zufälligen spielbaren Charakter anzeigt und ein Minispiel zur Verifikation der Spielrunde bietet.',
+  //   links: { live: null, github: null },
+  //   fullDescription: `Die LoL Gadgets Webapp ist eine Single-Page Application rund um das Spiel League of Legends. Sie ruft über die offizielle Riot Games API Daten zu Champions ab und stellt diese dynamisch dar.
+  //
+  // Ein integriertes Minispiel erlaubt es Spielern, ihren gespielten Champion nach einer Spielrunde zu verifizieren und Statistiken einzusehen.`,
+  //   architecture: `Die Anwendung ist als SPA mit Vue.js umgesetzt. Daten werden direkt im Browser von der Riot Games Data Dragon API und der League of Legends API abgerufen. Die gesamte Logik läuft client-seitig, es gibt kein eigenes Backend.`,
+  //   techStack: [
+  //     { name: 'Vue.js', role: 'Frontend-Framework für die Single-Page Application' },
+  //     { name: 'JavaScript', role: 'Programmiersprache' },
+  //     { name: 'Riot Games API', role: 'Datenbeschaffung für Champions und Spielstatistiken' },
+  //   ],
+  // },
 ]
